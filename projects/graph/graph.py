@@ -3,9 +3,10 @@ Simple graph implementation
 """
 from util import Stack, Queue  # These may come in handy
 
-class Graph:
 
+class Graph:
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
+
     def __init__(self):
         self.vertices = {}
 
@@ -13,42 +14,82 @@ class Graph:
         """
         Add a vertex to the graph.
         """
-        pass  # TODO
+        self.vertices[vertex_id] = set()
 
     def add_edge(self, v1, v2):
         """
-        Add a directed edge to the graph.
+        Add a undirected edge to the graph.
         """
-        pass  # TODO
+        if v1 in self.vertices and v2 in self.vertices:
+            self.vertices[v1].add(v2)
 
     def get_neighbors(self, vertex_id):
         """
         Get all neighbors (edges) of a vertex.
         """
-        pass  # TODO
+        if vertex_id in self.vertices:
+            return self.vertices[vertex_id]
 
     def bft(self, starting_vertex):
         """
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        # Create a queue
+        q = Queue()
+        # Enqueue the starting vertex
+        q.enqueue(starting_vertex)
+        # Create a set to store visited vertices
+        visited = set()
+        # While the queue is not empty...
+        while q.size() > 0:
+            # Dequeue the first vertex
+            v = q.dequeue()
+            # Check if it's been visited
+            # If it hasn't been visited...
+            if v not in visited:
+                # Mark it as visited
+                visited.add(v)
+                # Enqueue all it's neighbors
+                for neighbor in self.get_neighbors(v):
+                    q.enqueue(neighbor)
 
     def dft(self, starting_vertex):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        # Create a stack
+        s = Stack()
+        # Push the starting vertex
+        s.push(starting_vertex)
+        # Create a set to store visited vertices
+        visited = set()
+        # While the stack is not empty...
+        while s.size() > 0:
+            # Pop the first vertex
+            v = s.pop()
+            # Check if it's been visited
+            # If it hasn't been visited...
+            if v not in visited:
+                # Mark it as visited
+                visited.add(v)
+                # Push all it's neighbors onto the stack
+                for neighbor in self.get_neighbors(v):
+                    s.push(neighbor)
 
-    def dft_recursive(self, starting_vertex):
+    def dft_recursive(self, starting_vertex, visited=set()):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
 
         This should be done using recursion.
         """
-        pass  # TODO
+        visited.add(starting_vertex)
+        print(starting_vertex)
+        for neighbor in self.get_neighbors(starting_vertex):
+            if neighbor not in visited:
+                self.dft_recursive(neighbor, visited)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -56,8 +97,19 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        pass  # TODO
-
+        q = Queue()
+        visited = set()
+        path = [starting_vertex]
+        q.enqueue(path)
+        while q.size() > 0:
+            last_vertex = path[-1]
+            if last_vertex not in visited:
+                # Mark it as visited
+                visited.add(last_vertex)
+                # Push all it's neighbors onto the stack
+            if destination_vertex in self.get_neighbors(path[-1]):
+                path.append(destination_vertex)
+                return path
     def dfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing a path from
@@ -75,6 +127,7 @@ class Graph:
         This should be done using recursion.
         """
         pass  # TODO
+
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
