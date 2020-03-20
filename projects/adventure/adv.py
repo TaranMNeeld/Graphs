@@ -29,22 +29,43 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
-s = Queue()
-s.enqueue(player.current_room)
+graph = {}
+q = Queue()
+q.enqueue(player.current_room)
 visited = set()
 visited_rooms = set()
 
-while len(visited_rooms) < 500:
-    room = player.current_room
-    exits = [direction for direction in room.get_exits()]
-    print(f'possible exits: {exits}')
-    random_direction = exits[random.randint(0, len(exits) - 1)]
-    print(f'random exit chosen: {random_direction}')
-    player.current_room = room.get_room_in_direction(random_direction)
-    traversal_path.append(random_direction)
-    if room.id not in visited_rooms:
-        visited_rooms.add(room.id)
+for i in range(len(room_graph)):
+    graph[i] = {}
 
+while len(visited_rooms) < 500:
+    current_room = player.current_room
+    current_vertex = graph[current_room.id]
+    if current_room.id not in visited_rooms:
+        visited_rooms.add(current_room.id)
+    exits = [direction for direction in current_room.get_exits()]
+    for direction in exits:
+        if direction not in current_vertex:
+            current_vertex[direction] = '?'
+    random_direction = exits[random.randint(0, len(exits) - 1)]
+    next_room = current_room.get_room_in_direction(random_direction)
+    current_vertex[random_direction] = next_room.id
+    player.current_room = next_room
+    traversal_path.append(random_direction)
+for item in graph:
+    print(f'{item}: {graph[item]}')
+    # print(f'random exit chosen: {random_direction}')
+    # next_room = room.get_room_in_direction(random_direction)
+    # if next_room.id in visited_rooms and len(next_room.get_exits()) == 1:
+    #     pass
+    # else:
+    #     player.current_room = next_room
+    #     traversal_path.append(random_direction)
+    # if room.id not in visited_rooms:
+    #     visited_rooms.add(room.id)
+
+# for vertex in graph.vertices:
+#     print(f'{vertex}: {graph.vertices[vertex]}')
 
 # TRAVERSAL TEST
 visited_rooms = set()
@@ -73,3 +94,20 @@ else:
 #         break
 #     else:
 #         print("I did not understand that command.")
+
+
+  # room = player.current_room
+    # graph.add_vertex(room.id)
+    # exits = [direction for direction in room.get_exits()]
+    # graph.vertices[room.id] = {direction for direction in exits}
+    # print(f'possible exits: {exits}')
+    # random_direction = exits[random.randint(0, len(exits) - 1)]
+    # print(f'random exit chosen: {random_direction}')
+    # next_room = room.get_room_in_direction(random_direction)
+    # if next_room.id in visited_rooms and len(next_room.get_exits()) == 1:
+    #     pass
+    # else:
+    #     player.current_room = next_room
+    #     traversal_path.append(random_direction)
+    # if room.id not in visited_rooms:
+    #     visited_rooms.add(room.id)
