@@ -1,7 +1,7 @@
 from room import Room
 from player import Player
 from world import World
-from util import Queue
+from util import Stack
 
 import random
 from ast import literal_eval
@@ -30,8 +30,7 @@ player = Player(world.starting_room)
 traversal_path = []
 
 graph = {}
-q = Queue()
-q.enqueue(player.current_room)
+stack = Stack()
 visited = set()
 visited_rooms = set()
 
@@ -47,25 +46,32 @@ while len(visited_rooms) < 500:
     for direction in exits:
         if direction not in current_vertex:
             current_vertex[direction] = '?'
-    random_direction = exits[random.randint(0, len(exits) - 1)]
-    next_room = current_room.get_room_in_direction(random_direction)
-    current_vertex[random_direction] = next_room.id
-    player.current_room = next_room
-    traversal_path.append(random_direction)
-for item in graph:
-    print(f'{item}: {graph[item]}')
-    # print(f'random exit chosen: {random_direction}')
-    # next_room = room.get_room_in_direction(random_direction)
-    # if next_room.id in visited_rooms and len(next_room.get_exits()) == 1:
-    #     pass
-    # else:
-    #     player.current_room = next_room
-    #     traversal_path.append(random_direction)
-    # if room.id not in visited_rooms:
-    #     visited_rooms.add(room.id)
+    if '?' not in current_vertex.values():
+        direction = stack.pop()
+        traversal_path.append(direction)
+        player.current_room = current_room.get_room_in_direction(direction)
+    else:
+        for direction in exits:
+            if current_vertex[direction] == '?':
+                next_room = current_room.get_room_in_direction(direction)
+                opposite_direction = ''
+                next_vertex = graph[next_room.id]
+                if direction == 'n':
+                    opposite_direction = 's'
+                elif direction == 's':
+                    opposite_direction = 'n'
+                elif direction == 'e':
+                    opposite_direction = 'w'
+                elif direction == 'w':
+                    opposite_direction = 'e'
+                current_vertex[direction] = next_room.id
+                next_vertex[opposite_direction] = current_room.id
+                player.current_room = next_room
+                traversal_path.append(direction)
+                stack.push(opposite_direction)
+                break
 
-# for vertex in graph.vertices:
-#     print(f'{vertex}: {graph.vertices[vertex]}')
+
 
 # TRAVERSAL TEST
 visited_rooms = set()
@@ -94,20 +100,3 @@ else:
 #         break
 #     else:
 #         print("I did not understand that command.")
-
-
-  # room = player.current_room
-    # graph.add_vertex(room.id)
-    # exits = [direction for direction in room.get_exits()]
-    # graph.vertices[room.id] = {direction for direction in exits}
-    # print(f'possible exits: {exits}')
-    # random_direction = exits[random.randint(0, len(exits) - 1)]
-    # print(f'random exit chosen: {random_direction}')
-    # next_room = room.get_room_in_direction(random_direction)
-    # if next_room.id in visited_rooms and len(next_room.get_exits()) == 1:
-    #     pass
-    # else:
-    #     player.current_room = next_room
-    #     traversal_path.append(random_direction)
-    # if room.id not in visited_rooms:
-    #     visited_rooms.add(room.id)
